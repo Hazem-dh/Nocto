@@ -1,7 +1,7 @@
 import './App.css';
 import React, { useState, useEffect } from 'react';
 import { ethers } from 'ethers';
-
+import logo from './assets/logo.png'; // adjust the path as necessary
 function App() {
 
 
@@ -51,6 +51,9 @@ function App() {
 
   <>
  <div style={{ backgroundColor: '#282c34' }}  className="relative h-screen ">
+ <div className="absolute top-5 left-5">
+          <img src={logo} alt="Logo" className="h-32" />
+      </div>
  <div className="absolute top-5 right-5 flex items-center space-x-4">
         {network && (
           <div className="text-white font-semibold">
