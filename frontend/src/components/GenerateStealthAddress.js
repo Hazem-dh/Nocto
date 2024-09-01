@@ -26,7 +26,7 @@ function GenerateStealthAddress() {
     console.log(e.target.value);
   };
   return (
-    <div className="  flex flex-col items-center justify-center w-80 bg-white text-gray-800 p-6 rounded-lg shadow-xl">
+    <div className="  flex flex-col items-center justify-center w-1/3 bg-white text-gray-800 p-6 rounded-lg shadow-black shadow-lg">
       <h2 className="text-xl font-semibold mb-4">Card 1</h2>
       <input
         type="text"
