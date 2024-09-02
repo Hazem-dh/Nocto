@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { ethers, BrowserProvider } from "ethers";
 import { FhenixClient, EncryptedType, EncryptedUint8 } from "fhenixjs";
+import { contractABI } from "../Abi/Abi";
 
 function GenerateStealthAddress() {
   const [value, setValue] = useState("");
@@ -9,15 +10,27 @@ function GenerateStealthAddress() {
   const onButtonclick = async (e) => {
     e.preventDefault();
     const provider = new BrowserProvider(window.ethereum);
-
     const client = new FhenixClient({ provider });
     // to encrypt data for a Fhenix contract
+    let resultUint8;
     try {
-      const resultUint8 = await client.encrypt_uint8(20);
+      resultUint8 = await client.encrypt_uint32(Number(value));
       console.log(resultUint8);
     } catch (error) {
       console.log(error);
       console.log("connect your wallet");
+    }
+    const signer = await provider.getSigner();
+    console.log(signer);
+    const contractAddress = "0xe4e430285D4E1a42DCC3bBa6BF0a4790040C7624";
+    const contract = new ethers.Contract(contractAddress, contractABI, signer);
+
+    try {
+      const tx = await contract.store(resultUint8);
+      await tx.wait(); // Wait for the transaction to be mined
+      console.log("Transaction successful");
+    } catch (error) {
+      console.error("Error executing function:", error);
     }
   };
 
