@@ -5,7 +5,6 @@ import { contractABI } from "../Abi/Abi";
 
 function GenerateStealthAddress() {
   const [value, setValue] = useState("");
-  const [encryption, setEncryption] = useState("Nothing incrypted");
 
   const onButtonclick = async (e) => {
     e.preventDefault();
@@ -21,7 +20,6 @@ function GenerateStealthAddress() {
       console.log("connect your wallet");
     }
     const signer = await provider.getSigner();
-    console.log(signer);
     const contractAddress = "0xe4e430285D4E1a42DCC3bBa6BF0a4790040C7624";
     const contract = new ethers.Contract(contractAddress, contractABI, signer);
 
@@ -58,9 +56,6 @@ function GenerateStealthAddress() {
       >
         encrypt
       </button>
-
-      <br></br>
-      <p> {encryption}</p>
     </div>
   );
 }
