@@ -5,6 +5,7 @@ import { contractABI } from "../Abi/Abi";
 
 function RetrieveTokens() {
   const [decrypted, setDecrypted] = useState("");
+
   const onButtonclick = async (e) => {
     e.preventDefault();
     const provider = new BrowserProvider(window.ethereum);
@@ -12,18 +13,23 @@ function RetrieveTokens() {
     const signer = await provider.getSigner();
     const contractAddress = "0xe4e430285D4E1a42DCC3bBa6BF0a4790040C7624";
     const contract = new ethers.Contract(contractAddress, contractABI, signer);
-
     const permit = await getPermit(contractAddress, provider);
+
     client.storePermit(permit);
 
     const permission = client.extractPermitPermission(permit);
+    console.log(permission);
+
     try {
       const response = await contract.retrieve(permission);
+      console.log(response);
+      const plaintext = client.unseal(contractAddress, response);
+      console.log(Number(plaintext));
     } catch (error) {
       console.log("error");
     }
-    /*    const plaintext = client.unseal(contractAddress, response);
-    setDecrypted(plaintext); */
+
+    //setDecrypted(plaintext);
   };
 
   return (
