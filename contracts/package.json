@@ -5,6 +5,7 @@
     "hardhat": "^2.22.9"
   },
   "dependencies": {
-    "@fhenixprotocol/contracts": "^0.2.1"
+    "@fhenixprotocol/contracts": "^0.2.1",
+    "chalk": "^5.3.0"
   }
 }
