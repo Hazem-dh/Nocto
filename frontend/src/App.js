@@ -1,7 +1,6 @@
 import "./App.css";
 import React, { useState, useEffect } from "react";
-import { ethers, BrowserProvider } from "ethers";
-
+import { ethers } from "ethers";
 import ConnectWallet from "./components/ConnectWallet";
 import SendTokens from "./components/SendTokens";
 import RetrieveTokens from "./components/RetrieveTokens";
@@ -35,9 +34,6 @@ function App() {
   };
 
   const handleWalletConnect = (connected) => {
-    console.log("iaaaaaaaaaa");
-    console.log(connected);
-
     setIsWalletConnected(connected);
   };
 
@@ -55,6 +51,7 @@ function App() {
           {isWalletConnected ? (
             <>
               {" "}
+              {/* Same as */}
               <GenerateStealthAddress />
               <SendTokens></SendTokens>
               <RetrieveTokens></RetrieveTokens>
