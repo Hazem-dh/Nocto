@@ -4,7 +4,8 @@ import { FhenixClient } from "fhenixjs";
 import { contractABI } from "../Abi/Abi";
 
 function GenerateStealthAddress() {
-  const [privateKey, setPrivateKey] = useState("");
+  // see if user wants to generate
+  //const [privateKey, setPrivateKey] = useState("");
   const [isCopied, setIsCopied] = useState(false);
   const [walletAddress, setWalletAddress] = useState("0x...");
   const [error, setError] = useState("");
@@ -31,29 +32,44 @@ function GenerateStealthAddress() {
 
       // Get the user's MetaMask provider
       const provider = new BrowserProvider(window.ethereum);
+      const client = new FhenixClient({ provider });
+
       const signer = await provider.getSigner();
       const accounts = await provider.listAccounts();
       const userWallet = accounts[0].address;
-      // Concatenate the input and user's address
-      console.log(Math.random(12));
-      const concatenatedInput = Math.random(12) + userWallet;
+      // Using random Number for now , might change to use input later
+      const min = 100000000;
+      const max = 9223372036854775807;
+      const rand = min + Math.random() * (max - min);
+
+      const concatenatedInput = rand + userWallet;
 
       // Hash the concatenated string
       const hash = ethers.keccak256(ethers.toUtf8Bytes(concatenatedInput));
-      console.log(signer);
-
       // Sign the hash using MetaMask
       const signature = await signer.signMessage(hash);
       // Use the first 32 bytes of the signature to create a new wallet
       const signatureHash = ethers.keccak256(signature);
       const derivedPrivateKey = signatureHash.slice(0, 66); // Take the first 32 bytes (64 hex chars + '0x')
-
       const wallet = new ethers.Wallet(derivedPrivateKey);
-
-      // Set the generated private key and wallet address
-      setPrivateKey(wallet.privateKey);
       setWalletAddress(wallet.address);
-      console.log(wallet.privateKey);
+
+      /* global BigInt */
+      console.log(Number(rand));
+      let encrypted = await client.encrypt_uint64(BigInt(rand));
+      // smart contract address , to change later
+      const contractAddress = "0xe4e430285D4E1a42DCC3bBa6BF0a4790040C7624";
+      const contract = new ethers.Contract(
+        contractAddress,
+        contractABI,
+        signer
+      );
+      const tx = await contract.store(encrypted);
+      await tx.wait(); // Wait for the transaction to be mined
+      console.log("Transaction successful");
+      // Set the generated private key and wallet address
+      //setPrivateKey(wallet.privateKey);
+      // console.log(wallet.privateKey);
       console.log(wallet.address);
     } catch (error) {
       console.log(error);
@@ -61,29 +77,8 @@ function GenerateStealthAddress() {
         "An error occurred while generating the key pair: " + error.message
       );
     }
-  };
-
-  const onButtonclick = async (e) => {
-    e.preventDefault();
-    const provider = new BrowserProvider(window.ethereum);
-    const client = new FhenixClient({ provider });
-    // to encrypt data for a Fhenix contract
-    let resultUint8;
-    try {
-      resultUint8 = await client.encrypt_uint32(Number(1));
-      console.log(resultUint8);
-    } catch (error) {
-      console.log(error);
-      console.log("connect your wallet");
-    }
-    const signer = await provider.getSigner();
-    const contractAddress = "0xe4e430285D4E1a42DCC3bBa6BF0a4790040C7624";
-    const contract = new ethers.Contract(contractAddress, contractABI, signer);
 
     try {
-      const tx = await contract.store(resultUint8);
-      await tx.wait(); // Wait for the transaction to be mined
-      console.log("Transaction successful");
     } catch (error) {
       console.error("Error executing function:", error);
     }
@@ -147,14 +142,14 @@ function GenerateStealthAddress() {
           Generate
         </button>
       </div>
-      <button
+      {/*       <button
         className="flex items-center justify-center mt-3 px-4 py-2 bg-blue-600 text-white rounded-lg shadow-md hover:bg-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-opacity-75"
         onClick={(e) => {
           onButtonclick(e);
         }}
       >
         Save
-      </button>
+      </button> */}
     </div>
   );
 }
