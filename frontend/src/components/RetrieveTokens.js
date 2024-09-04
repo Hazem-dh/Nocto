@@ -18,18 +18,16 @@ function RetrieveTokens() {
     client.storePermit(permit);
 
     const permission = client.extractPermitPermission(permit);
-    console.log(permission);
 
     try {
       const response = await contract.retrieve(permission);
       console.log(response);
       const plaintext = client.unseal(contractAddress, response);
       console.log(Number(plaintext));
+      setDecrypted(Number(plaintext));
     } catch (error) {
       console.log("error");
     }
-
-    //setDecrypted(plaintext);
   };
 
   return (
