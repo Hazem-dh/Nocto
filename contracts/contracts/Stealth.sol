@@ -6,16 +6,19 @@ import "@fhenixprotocol/contracts/access/Permissioned.sol";
 // import "hardhat/console.sol";
 
 contract Stealth {
-    euint32 internal encryptedNumber;
+    mapping(address => euint64) internal safe;
+    mapping(bytes32 => eaddress) internal addresses;
+    mapping(bytes32 => euint64) internal balanceredeem;
 
-    function store(inEuint32 calldata encryptedBalance) public {
-        encryptedNumber = FHE.asEuint32(encryptedBalance);
+    function storewallet(inEuint64 calldata encryptedSecret) public {
+        safe[msg.sender] = FHE.asEuint64(encryptedSecret);
     }
+
+    function sendEth(inEaddress calldata encryptedAddress) public payable {}
+    // Logic to return sensitive data
 
     function retrieve(
-        Permission memory signature
-    ) public view returns (string memory) {
-        // Seal the output for a specific publicKey
-        return FHE.sealoutput(encryptedNumber, signature.publicKey);
-    }
+        inEaddress calldata encryptedAddress,
+        Permission calldata permission
+    ) public view onlySender(permission) {}
 }
