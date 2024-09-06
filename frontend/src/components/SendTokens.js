@@ -1,12 +1,83 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useState } from "react";
+import { ethers, BrowserProvider } from "ethers";
+import { FhenixClient } from "fhenixjs";
+import { CONTRACT_ABI, CONTRACT_ADDRESS } from "../ABI/ABI";
 
 function SendTokens() {
   const [walletAddress, setWalletAddress] = useState("");
   const [disabled, Setdisabled] = useState(true);
+  const [error, setError] = useState("");
+  const [success, Setsuccess] = useState("");
+  const [redeem, SetRedeem] = useState("");
 
-  useEffect(() => {}, [walletAddress]);
+  useEffect(() => {
+    console.log(walletAddress);
+    if (isValidEthereumAddress(walletAddress)) {
+      Setdisabled(false);
+    } else {
+      Setdisabled(true);
+    }
+  }, [walletAddress]);
 
-  const SendHandle = (e) => {};
+  const isValidEthereumAddress = (address) => {
+    const re = /^0x[a-fA-F0-9]{40}$/;
+    return re.test(address);
+  };
+
+  const generateSecureRedeemCode = (length = 12) => {
+    const charset = "0123456789"; // Restricting to numeric characters only
+    let code = "";
+
+    // Using crypto.getRandomValues for secure random number generation
+    const randomValues = new Uint8Array(length);
+    window.crypto.getRandomValues(randomValues);
+
+    for (let i = 0; i < length; i++) {
+      const randomIndex = randomValues[i] % charset.length;
+      code += charset[randomIndex];
+    }
+
+    return code;
+  };
+
+  const SendHandle = async (e) => {
+    try {
+      // Get the user's MetaMask provider
+      const provider = new BrowserProvider(window.ethereum);
+      const client = new FhenixClient({ provider });
+
+      const signer = await provider.getSigner();
+
+      /* global BigInt */
+      let encryptedAddress = await client.encrypt_address(walletAddress);
+      let redeem_code = generateSecureRedeemCode();
+
+      let encrypted_redeem_code = await client.encrypt_uint64(
+        BigInt(redeem_code)
+      );
+      console.log(encrypted_redeem_code);
+
+      // smart contract address , to change later
+      const contract = new ethers.Contract(
+        CONTRACT_ADDRESS,
+        CONTRACT_ABI,
+        signer
+      );
+      const tx = await contract.sendEth(
+        encryptedAddress,
+        encrypted_redeem_code,
+        {
+          value: ethers.parseEther("0.1"), // Convert 0.1 ETH to Wei
+        }
+      );
+      await tx.wait(); // Wait for theEtransat to be mined
+      SetRedeem(redeem_code);
+      console.log(redeem_code);
+    } catch (error) {
+      setError("An error occurred while generating the key pair");
+      console.log(error.message);
+    }
+  };
 
   return (
     <div className="flex flex-col items-center justify-center w-1/3 bg-white text-gray-800 p-6 rounded-lg shadow-black shadow-lg">
@@ -20,7 +91,8 @@ function SendTokens() {
             value={walletAddress}
             placeholder="0x.."
             onChange={(e) => {
-              setWalletAddress(e.value);
+              setWalletAddress(e.target.value);
+              console.log(e.target.value);
             }}
           />
         </div>
@@ -38,6 +110,9 @@ function SendTokens() {
           Send
         </button>
       </div>
+      {redeem && (
+        <div className="text-green-500 text-shadow-8 font-bold ">{redeem}</div>
+      )}
     </div>
   );
 }
