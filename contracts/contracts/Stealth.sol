@@ -17,6 +17,7 @@ contract Stealth {
      * @dev This function stores the provided wallet seed for a newly generated stealth wallet
      * @param encryptedSecret the encrypted seed to be stored.
      */
+    //TODO : need to add onlySender and make it work
     function storewallet(inEuint64 calldata encryptedSecret) public {
         safe[msg.sender] = FHE.asEuint64(encryptedSecret);
     }
