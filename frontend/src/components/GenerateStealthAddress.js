@@ -45,7 +45,6 @@ function GenerateStealthAddress() {
 
   // Function to copy user address to clip board
   const GenerateAddress = async () => {
-    console.log(disabled);
     try {
       // Request account access if needed
       await window.ethereum.request({ method: "eth_requestAccounts" });
@@ -94,11 +93,6 @@ function GenerateStealthAddress() {
       console.log(error);
       setError("An error occurred while generating the key pair");
       console.log(error.message);
-    }
-
-    try {
-    } catch (error) {
-      console.error("Error executing function:", error);
     }
   };
 
@@ -187,7 +181,7 @@ function GenerateStealthAddress() {
           </label>
         </div>
       </div>
-      {exportPk && (
+      {Pk && (
         <div className="text-red-500 text-shadow-8 font-bold mt-2"> {Pk} </div>
       )}
       <button
