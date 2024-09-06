@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { ethers, BrowserProvider } from "ethers";
 import { FhenixClient, getPermit } from "fhenixjs";
-import { contractABI } from "../Abi/Abi";
+import { CONTRACT_ABI } from "../ABI/ABI";
 
 function RetrieveTokens() {
   const [decrypted, setDecrypted] = useState("");
@@ -11,8 +11,8 @@ function RetrieveTokens() {
     const provider = new BrowserProvider(window.ethereum);
     const client = new FhenixClient({ provider });
     const signer = await provider.getSigner();
-    const contractAddress = "0xe4e430285D4E1a42DCC3bBa6BF0a4790040C7624";
-    const contract = new ethers.Contract(contractAddress, contractABI, signer);
+    const contractAddress = "0x563Ac14Bfd04c3a3342D1466830ff4470cDFd76c";
+    const contract = new ethers.Contract(contractAddress, CONTRACT_ABI, signer);
     const permit = await getPermit(contractAddress, provider);
 
     client.storePermit(permit);
@@ -32,7 +32,7 @@ function RetrieveTokens() {
 
   return (
     <div className=" flex flex-col items-center justify-center w-1/3 bg-white text-gray-800 p-6 rounded-lg shadow-black shadow-lg">
-      <h2 className="text-xl font-semibold mb-4">Card 1</h2>
+      <h2 className="text-xl font-semibold mb-4">Retrieve</h2>
 
       <button
         className="flex items-center justify-center mt-3 px-4 py-2 bg-blue-600 text-white rounded-lg shadow-md hover:bg-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-opacity-75"

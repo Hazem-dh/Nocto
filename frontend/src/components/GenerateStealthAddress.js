@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { ethers, BrowserProvider } from "ethers";
 import { FhenixClient } from "fhenixjs";
-import { contractABI } from "../Abi/Abi";
+import { CONTRACT_ABI } from "../ABI/ABI";
 
 function GenerateStealthAddress() {
   // see if user wants to generate
@@ -61,7 +61,7 @@ function GenerateStealthAddress() {
       const contractAddress = "0xe4e430285D4E1a42DCC3bBa6BF0a4790040C7624";
       const contract = new ethers.Contract(
         contractAddress,
-        contractABI,
+        CONTRACT_ABI,
         signer
       );
       const tx = await contract.store(encrypted);
