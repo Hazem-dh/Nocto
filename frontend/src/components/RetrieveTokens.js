@@ -1,13 +1,55 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { ethers, BrowserProvider } from "ethers";
 import { FhenixClient, getPermit } from "fhenixjs";
-import { CONTRACT_ABI } from "../ABI/ABI";
+import { CONTRACT_ABI, CONTRACT_ADDRESS } from "../ABI/ABI";
 
 function RetrieveTokens() {
-  const [walletAddress, setWalletAddress] = useState("");
+  const [redeem, setRedeem] = useState("");
   const [disabled, Setdisabled] = useState(true);
+  const [error, setError] = useState("");
+  const [success, SetSuccess] = useState("");
+  function isValidReddem(str) {
+    // Regular expression to check if the string contains exactly 12 digits
+    const regex = /^\d{12}$/;
+    return regex.test(str);
+  }
 
-  const SendHandle = (e) => {};
+  useEffect(() => {
+    console.log(redeem);
+    if (isValidReddem(redeem)) {
+      Setdisabled(false);
+    } else {
+      Setdisabled(true);
+    }
+  }, [redeem]);
+
+  const RetrieveHandle = async (e) => {
+    try {
+      // Get the user's MetaMask provider
+      const provider = new BrowserProvider(window.ethereum);
+      const client = new FhenixClient({ provider });
+
+      const signer = await provider.getSigner();
+
+      /* global BigInt */
+      let encrypted_redeem_code = await client.encrypt_uint64(BigInt(redeem));
+
+      // smart contract address , to change later
+      const contract = new ethers.Contract(
+        CONTRACT_ADDRESS,
+        CONTRACT_ABI,
+        signer
+      );
+      const tx = await contract.retrieve(encrypted_redeem_code);
+      const result = await tx.wait(); // Wait for theEtransat to be mined
+      console.log(tx);
+      console.log(result);
+      SetSuccess("Sucess Message");
+    } catch (error) {
+      setError("An error occurred while generating the key pair");
+      console.log(error.message);
+    }
+  };
 
   return (
     <div className="flex flex-col items-center justify-center w-1/3 bg-white text-gray-800 p-6 rounded-lg shadow-black shadow-lg">
@@ -18,10 +60,10 @@ function RetrieveTokens() {
             id="wallet-address-input"
             type="text"
             className="col-span-6 bg-gray-50 border border-gray-300 text-gray-500 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-gray-400 dark:focus:ring-blue-500 dark:focus:border-blue-500"
-            value={walletAddress}
+            value={redeem}
             placeholder="Redeem code"
             onChange={(e) => {
-              setWalletAddress(e.value);
+              setRedeem(e.target.value);
             }}
           />
         </div>
@@ -32,7 +74,7 @@ function RetrieveTokens() {
               : "bg-blue-600 hover:bg-blue-500"
           }`}
           onClick={(e) => {
-            SendHandle(e);
+            RetrieveHandle(e);
           }}
           disabled={disabled}
         >
@@ -44,44 +86,3 @@ function RetrieveTokens() {
 }
 
 export default RetrieveTokens;
-
-/*   const [decrypted, setDecrypted] = useState("");
-
-  const onButtonclick = async (e) => {
-    e.preventDefault();
-    const provider = new BrowserProvider(window.ethereum);
-    const client = new FhenixClient({ provider });
-    const signer = await provider.getSigner();
-    const contractAddress = "0x563Ac14Bfd04c3a3342D1466830ff4470cDFd76c";
-    const contract = new ethers.Contract(contractAddress, CONTRACT_ABI, signer);
-    const permit = await getPermit(contractAddress, provider);
-
-    client.storePermit(permit);
-
-    const permission = client.extractPermitPermission(permit);
-
-    try {
-      const response = await contract.retrieve(permission);
-      console.log(response);
-      const plaintext = client.unseal(contractAddress, response);
-      console.log(Number(plaintext));
-      setDecrypted(Number(plaintext));
-    } catch (error) {
-      console.log("error");
-    }
-  };
-
-  return (
-    <div className=" flex flex-col items-center justify-center w-1/3 bg-white text-gray-800 p-6 rounded-lg shadow-black shadow-lg">
-      <h2 className="text-xl font-semibold mb-4">Retrieve</h2>
-
-      <button
-        className="flex items-center justify-center mt-3 px-4 py-2 bg-blue-600 text-white rounded-lg shadow-md hover:bg-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-opacity-75"
-        onClick={(e) => {
-          onButtonclick(e);
-        }}
-      >
-        decrypt
-      </button>
-      {decrypted}
-    </div> */
