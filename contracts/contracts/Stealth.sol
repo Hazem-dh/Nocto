@@ -4,6 +4,7 @@ import "@fhenixprotocol/contracts/FHE.sol";
 import "@fhenixprotocol/contracts/access/Permissioned.sol";
 
 contract Stealth {
+    // low amount for testing
     uint constant AMOUNT1 = 0.1 ether;
     mapping(address => euint64) internal safe;
     mapping(uint256 => eaddress) internal redeemers;
@@ -14,18 +15,17 @@ contract Stealth {
     }
     /**
      * @notice Stores encrypted wallet seeds.
-     * @dev This function stores the provided wallet seed for a newly generated stealth wallet
-     * @param encryptedSecret the encrypted seed to be stored.
+     * @dev This function stores the provided wallet seed for a newly generated wallet
+     * @param encryptedSecret The value to store, must be greater than zero.
      */
-    //TODO : need to add onlySender and make it work
     function storewallet(inEuint64 calldata encryptedSecret) public {
         safe[msg.sender] = FHE.asEuint64(encryptedSecret);
     }
 
     /**
-     * @notice Store Eth in smart contract.
-     * @dev function that stores Eth to an encrypted address to be retrieved in the future
-     *  and a reddem code is used to point to encryoted redeem address
+     * @notice Stores encrypted wallet seeds.
+     * @dev This function stores the provided value in the `storedValue` state variable.
+     * It emits a `ValueChanged` event upon successful execution.
      * @param encryptedAddress The value to store, must be greater than zero.
      * @param encryptedredeem The value to store, must be greater than zero.
      */
@@ -43,15 +43,20 @@ contract Stealth {
      * @dev a function that sent eth to an address that was sent eth
      * @param encryptedredeem encrypted redeem code.
      */
-    function retrieveEth(inEuint64 calldata encryptedredeem) public {
+    function retrieve(
+        inEuint64 calldata encryptedredeem
+    ) public returns (bool) {
         uint64 redeemcode = FHE.decrypt(FHE.asEuint64(encryptedredeem));
-        address redeemer = FHE.decrypt(redeemers[redeemcode]);
-        require(msg.sender == redeemer, "No one sent you ETH");
+        eaddress redeemer = redeemers[redeemcode];
+        eaddress sender = FHE.asEaddress(msg.sender);
+        FHE.req(FHE.eq(redeemer, sender));
+        //require(msg.sender == redeemer, "No one sent you ETH");
         // this check might be useless
         require(address(this).balance >= AMOUNT1, "Insufficient balance");
         // Send ETH using transfer()
         payable(msg.sender).transfer(AMOUNT1);
         //empty the slot
         redeemers[redeemcode] = FHE.asEaddress(0);
+        return true;
     }
 }
