@@ -6,8 +6,9 @@ import { CONTRACT_ABI, CONTRACT_ADDRESS } from "../ABI/ABI";
 function SendTokens() {
   const [walletAddress, setWalletAddress] = useState("");
   const [disabled, Setdisabled] = useState(true);
+  //TODO : Set erorr and success message
   const [error, setError] = useState("");
-  const [success, Setsuccess] = useState("");
+  const [success, SetSuccess] = useState("");
   const [redeem, SetRedeem] = useState("");
 
   useEffect(() => {
@@ -67,7 +68,7 @@ function SendTokens() {
         encryptedAddress,
         encrypted_redeem_code,
         {
-          value: ethers.parseEther("0.1"), // Convert 0.1 ETH to Wei
+          value: ethers.parseEther("0.001"), // Convert 0.1 ETH to Wei
         }
       );
       await tx.wait(); // Wait for theEtransat to be mined
@@ -92,7 +93,6 @@ function SendTokens() {
             placeholder="0x.."
             onChange={(e) => {
               setWalletAddress(e.target.value);
-              console.log(e.target.value);
             }}
           />
         </div>
