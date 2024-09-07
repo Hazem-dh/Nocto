@@ -41,7 +41,7 @@ function RetrieveTokens() {
         signer
       );
       const tx = await contract.retrieve(encrypted_redeem_code);
-      const result = await tx.wait(); // Wait for theEtransat to be mined
+      const result = await tx.wait(); // Wait for the transaction to be mined
       console.log(tx);
       console.log(result);
       SetSuccess("Sucess Message");
