@@ -60,11 +60,14 @@ contract Stealth {
         inEaddress calldata encryptedAddress,
         inEuint64 calldata encryptedredeem
     ) public payable allowedValue {
+        //store encrypted redeem code for check when retrieving
         eRedeems[msg.sender] = FHE.asEuint64(encryptedredeem);
         uint64 redeemcode = FHE.decrypt(FHE.asEuint64(encryptedredeem));
         //store encrypted address
         redeemers[redeemcode] = FHE.asEaddress(encryptedAddress);
+        // allow sender to get back their eth
         notRedeemed[redeemcode] = true;
+        // 1 week timelock to retrieve eth
         timeLock[msg.sender] = block.timestamp;
     }
 
@@ -80,7 +83,6 @@ contract Stealth {
         FHE.req(FHE.eq(redeemer, sender));
         // this check might be useless
         require(address(this).balance >= AMOUNT1, "Insufficient balance");
-        // Send ETH using transfer()
         //empty the slot
         redeemers[redeemcode] = FHE.asEaddress(0);
         //confirm reception
@@ -95,16 +97,17 @@ contract Stealth {
      */
     function getBackEth(inEuint64 calldata encryptedredeem) public {
         uint64 redeemcode = FHE.decrypt(FHE.asEuint64(encryptedredeem));
-        // Eth should not have been already retrieved by reciever
-        require(
-            notRedeemed[redeemcode],
-            "Reciver has already retrived the sent eth"
-        );
         // A minimum of a week should pass before being able to send back eth
         require(
             block.timestamp > timeLock[msg.sender] + WEEK,
             "Reciver has already retrived the sent eth"
         );
+        // Eth should not have been already retrieved by reciever
+        require(
+            notRedeemed[redeemcode],
+            "Reciver has already retrived the sent eth"
+        );
+
         //confirm reception
         notRedeemed[redeemcode] = false;
         //clear redeem code
