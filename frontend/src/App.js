@@ -5,6 +5,7 @@ import ConnectWallet from "./components/ConnectWallet";
 import SendTokens from "./components/SendTokens";
 import RetrieveTokens from "./components/RetrieveTokens";
 import GenerateStealthAddress from "./components/GenerateStealthAddress";
+import GetBackEth from "./components/GetBackEth";
 import logo from "./assets/logo.png";
 import WalletGif from "./components/WalletGif";
 import Ripple from "./components/Ripple";
@@ -50,14 +51,14 @@ const App = () => {
         <ConnectWallet isConnected={handleWalletConnect} />
         <div className="flex flex-row min-h-screen ">
           <div className="flex flex-col items-center justify-center w-1/2 p-10 space-y-6 text-white">
-            <h1 className="text-4xl font-bold">Welcome to Nocto</h1>
-            <p className="text-xl">
+            <h1 className="text-6xl font-bold">Welcome to Nocto</h1>
+            <p className="text-2xl">
               Nocto is your gateway to private, secure, and anonymous
               transactions. Leveraging FHE (Fully Homomorphic Encryption), Nocto
               allows you to create a stealth wallet, send ETH anonymously, and
               retrieve it securely using a unique redeem code.
             </p>
-            <p className="text-lg">Experience next-level privacy with Nocto.</p>
+            <p className="text-xl">Experience next-level privacy with Nocto.</p>
           </div>
           <div className="flex flex-col items-center justify-center w-3/4  space-y-6">
             {isWalletConnected ? (
@@ -67,6 +68,7 @@ const App = () => {
                 <GenerateStealthAddress />
                 <SendTokens></SendTokens>
                 <RetrieveTokens></RetrieveTokens>
+                <GetBackEth></GetBackEth>
               </>
             ) : (
               <>
