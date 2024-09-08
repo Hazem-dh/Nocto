@@ -37,7 +37,7 @@ function GetBackEth() {
 
   return (
     <div className="flex flex-col items-center justify-center w-7/12 bg-white text-gray-800 p-6 rounded-lg shadow-black shadow-lg">
-      <h2 className="text-xl font-semibold mb-4"> Geth back your eth</h2>
+      <h2 className="text-xl font-semibold mb-4"> Get back your eth</h2>
       <div className=" pb-3   relative">
         <p>
           {" "}
