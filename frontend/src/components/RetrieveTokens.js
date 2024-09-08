@@ -40,7 +40,7 @@ function RetrieveTokens() {
         CONTRACT_ABI,
         signer
       );
-      const tx = await contract.retrieve(encrypted_redeem_code);
+      const tx = await contract.recieve(encrypted_redeem_code);
       const result = await tx.wait(); // Wait for the transaction to be mined
       console.log(tx);
       console.log(result);
