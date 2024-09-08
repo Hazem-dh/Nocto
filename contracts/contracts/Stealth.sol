@@ -11,8 +11,9 @@ contract Stealth {
 
     mapping(address => euint64) internal safe;
     mapping(uint256 => eaddress) internal redeemers;
-    mapping(address => bool) internal notRedeemed;
+    mapping(uint256 => bool) internal notRedeemed;
     mapping(address => uint256) internal timeLock;
+    mapping(address => euint64) internal eRedeems;
 
     /**
      * @dev Modifier to make a function callable only if the sender sents 0.1 eth
@@ -35,6 +36,15 @@ contract Stealth {
     }
 
     /**
+     * @notice Stores encrypted redeemcode.
+     * @dev This function stores the provided redeem code
+     * @param encryptedredeem The value to store, must be greater than zero.
+     */
+    function storeRedeemCode(inEuint64 calldata encryptedredeem) public {
+        eRedeems[msg.sender] = FHE.asEuint64(encryptedredeem);
+    }
+
+    /**
      * @notice Stores encrypted wallet seeds.
      * @dev This function stores the provided value in the `storedValue` state variable.
      * It emits a `ValueChanged` event upon successful execution.
@@ -46,9 +56,9 @@ contract Stealth {
         inEuint64 calldata encryptedredeem
     ) public payable allowedValue {
         uint64 redeemcode = FHE.decrypt(FHE.asEuint64(encryptedredeem));
-        //Add check if
+        //store encrypted address
         redeemers[redeemcode] = FHE.asEaddress(encryptedAddress);
-        notRedeemed[msg.sender] = true;
+        notRedeemed[redeemcode] = true;
         timeLock[msg.sender] = block.timestamp;
     }
 
@@ -57,7 +67,7 @@ contract Stealth {
      * @dev a function that sent eth to an address that was sent eth
      * @param encryptedredeem encrypted redeem code.
      */
-    function retrieve(inEuint64 calldata encryptedredeem) public {
+    function recieve(inEuint64 calldata encryptedredeem) public {
         uint64 redeemcode = FHE.decrypt(FHE.asEuint64(encryptedredeem));
         eaddress redeemer = redeemers[redeemcode];
         eaddress sender = FHE.asEaddress(msg.sender);
@@ -69,7 +79,7 @@ contract Stealth {
         //empty the slot
         redeemers[redeemcode] = FHE.asEaddress(0);
         //confirm reception
-        notRedeemed[msg.sender] = false;
+        notRedeemed[redeemcode] = false;
     }
 
     /**
@@ -77,10 +87,11 @@ contract Stealth {
      * @dev a function to retrieve sent eth after a week in case it's not been recieved to
      *   prevent eth from being locked inside the contract
      */
-    function getBackEth() public {
+    function getBackEth(inEuint64 calldata encryptedredeem) public {
+        uint64 redeemcode = FHE.decrypt(FHE.asEuint64(encryptedredeem));
         // Eth should not have been already retrieved by reciever
         require(
-            notRedeemed[msg.sender],
+            notRedeemed[redeemcode],
             "Reciver has already retrived the sent eth"
         );
         // A minimum of a week should pass before being able to send back eth
@@ -88,6 +99,8 @@ contract Stealth {
             block.timestamp > timeLock[msg.sender] + WEEK,
             "Reciver has already retrived the sent eth"
         );
+        //confirm reception
+        notRedeemed[redeemcode] = false;
         // this check might be useless
         require(address(this).balance >= AMOUNT1, "Insufficient balance");
 
