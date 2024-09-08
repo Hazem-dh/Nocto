@@ -1,4 +1,4 @@
-export const CONTRACT_ADDRESS = "0xf0fF2331ABf8d6C166891156b6C7F488a3fE946E";
+export const CONTRACT_ADDRESS = "0x2E9c97B62b003Cd47E50FF9D8CE8Ae75c191630A";
 export const CONTRACT_ABI = [
   {
     inputs: [
@@ -15,15 +15,67 @@ export const CONTRACT_ABI = [
         type: "tuple",
       },
     ],
-    name: "retrieve",
-    outputs: [
+    name: "getBackEth",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
       {
-        internalType: "bool",
-        name: "",
-        type: "bool",
+        internalType: "bytes32",
+        name: "pubkey",
+        type: "bytes32",
       },
     ],
+    name: "getSealedWallet",
+    outputs: [
+      {
+        internalType: "string",
+        name: "",
+        type: "string",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        components: [
+          {
+            internalType: "bytes",
+            name: "data",
+            type: "bytes",
+          },
+        ],
+        internalType: "struct inEuint64",
+        name: "encryptedredeem",
+        type: "tuple",
+      },
+    ],
+    name: "recieve",
+    outputs: [],
     stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "bytes32",
+        name: "pubkey",
+        type: "bytes32",
+      },
+    ],
+    name: "sealoutputRedeem",
+    outputs: [
+      {
+        internalType: "string",
+        name: "",
+        type: "string",
+      },
+    ],
+    stateMutability: "view",
     type: "function",
   },
   {

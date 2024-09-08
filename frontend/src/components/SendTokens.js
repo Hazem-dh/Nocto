@@ -76,12 +76,11 @@ function SendTokens() {
       console.log(redeem_code);
     } catch (error) {
       setError("An error occurred while generating the key pair");
-      console.log(error.message);
     }
   };
 
   return (
-    <div className="flex flex-col items-center justify-center w-1/2 bg-white text-gray-800 p-6 rounded-lg shadow-black shadow-lg">
+    <div className="flex flex-col items-center justify-center w-7/12 bg-white text-gray-800 p-6 rounded-lg shadow-black shadow-lg">
       <h2 className="text-xl font-semibold mb-4">Send ETH</h2>
       <div className="flex w-full flex-row mb-2">
         <div className="w-3/4  relative">
@@ -111,7 +110,20 @@ function SendTokens() {
         </button>
       </div>
       {redeem && (
-        <div className="text-green-500 text-shadow-8 font-bold ">{redeem}</div>
+        <>
+          <div className="text-black-500 text-shadow-8">
+            Give this Redeemcode to the reciever to retrieve thier eth{" "}
+          </div>
+
+          <div className="text-green-500 text-shadow-8 font-bold ">
+            {redeem}
+          </div>
+        </>
+      )}
+      {error && (
+        <div className="text-red-500 text-shadow-8 font-bold ">
+          An error occured when sending ETH
+        </div>
       )}
     </div>
   );

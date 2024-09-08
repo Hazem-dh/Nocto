@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { ethers, BrowserProvider } from "ethers";
-import { FhenixClient } from "fhenixjs";
+import { FhenixClient, getPermit } from "fhenixjs";
 import { CONTRACT_ABI, CONTRACT_ADDRESS } from "../ABI/ABI";
 
 function GenerateStealthAddress() {
@@ -56,7 +56,7 @@ function GenerateStealthAddress() {
       const signer = await provider.getSigner();
       const accounts = await provider.listAccounts();
       const userWallet = accounts[0].address;
-      // Using random Number for now , might change to use input later
+      // Using random Number for now , This is just for POC
       const min = 100000000;
       const max = 9223372036854775807;
       const rand = min + Math.random() * (max - min);
@@ -96,8 +96,49 @@ function GenerateStealthAddress() {
     }
   };
 
+  const retrieveAddress = async (e) => {
+    e.preventDefault();
+    const provider = new BrowserProvider(window.ethereum);
+    const client = new FhenixClient({ provider });
+    const signer = await provider.getSigner();
+
+    const contract = new ethers.Contract(
+      CONTRACT_ADDRESS,
+      CONTRACT_ABI,
+      signer
+    );
+    const permit = await getPermit(CONTRACT_ADDRESS, provider);
+
+    client.storePermit(permit);
+
+    const permission = client.extractPermitPermission(permit);
+
+    try {
+      const response = await contract.getSealedWallet(permission.publicKey);
+
+      const plaintext = client.unseal(CONTRACT_ADDRESS, response);
+      console.log(secret);
+      const secret = Number(plaintext);
+      const accounts = await provider.listAccounts();
+      const userWallet = accounts[0].address;
+      // Using random Number for now , might change to use input later
+      const concatenatedInput = secret + userWallet;
+      // Hash the concatenated string
+      const hash = ethers.keccak256(ethers.toUtf8Bytes(concatenatedInput));
+      // Sign the hash using MetaMask
+      const signature = await signer.signMessage(hash);
+      // Use the first 32 bytes of the signature to create a new wallet
+      const signatureHash = ethers.keccak256(signature);
+      const derivedPrivateKey = signatureHash.slice(0, 66); // Take the first 32 bytes (64 hex chars + '0x')
+      const wallet = new ethers.Wallet(derivedPrivateKey);
+      setPk("Private key : " + wallet.privateKey);
+      setWalletAddress(wallet.address);
+    } catch (error) {
+      setError("You don't have any private key stored");
+    }
+  };
   return (
-    <div className="  flex flex-col items-center justify-center w-1/2 bg-white text-gray-800 p-6 rounded-lg shadow-black  drop-shadow-lg shadow-lg">
+    <div className="  flex flex-col items-center justify-center w-7/12 bg-white text-gray-800 p-6 rounded-lg shadow-black  drop-shadow-lg shadow-lg">
       <h2 className="text-xl font-semibold mb-4">Generate a stealth Address</h2>
       <h4 className="text-l  mb-4">
         Choose wether to store your wallet or export your private key or why not
@@ -196,6 +237,14 @@ function GenerateStealthAddress() {
         disabled={disabled}
       >
         Generate
+      </button>
+      <button
+        className={`flex items-center justify-center my-5 py-2 px-8 rounded-lg shadow-md text-white focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-opacity-75 ${"bg-blue-600 hover:bg-blue-500"}`}
+        onClick={(e) => {
+          retrieveAddress(e);
+        }}
+      >
+        retrieve Private key
       </button>
       {error && (
         <div className="text-red-500 text-shadow-8 font-bold ">{error}</div>

@@ -28,7 +28,6 @@ function RetrieveTokens() {
       // Get the user's MetaMask provider
       const provider = new BrowserProvider(window.ethereum);
       const client = new FhenixClient({ provider });
-
       const signer = await provider.getSigner();
 
       /* global BigInt */
@@ -44,15 +43,15 @@ function RetrieveTokens() {
       const result = await tx.wait(); // Wait for the transaction to be mined
       console.log(tx);
       console.log(result);
-      SetSuccess("Sucess Message");
+      SetSuccess("Eth recieved successfully ");
     } catch (error) {
-      setError("An error occurred while generating the key pair");
+      setError("You have wrong Redeem code or have not been sent ETH");
       console.log(error.message);
     }
   };
 
   return (
-    <div className="flex flex-col items-center justify-center w-1/2 bg-white text-gray-800 p-6 rounded-lg shadow-black shadow-lg">
+    <div className="flex flex-col items-center justify-center w-7/12 bg-white text-gray-800 p-6 rounded-lg shadow-black shadow-lg">
       <h2 className="text-xl font-semibold mb-4"> Retrieve ETH</h2>
       <div className="flex w-full flex-row mb-2">
         <div className="w-3/4  relative">
@@ -81,6 +80,12 @@ function RetrieveTokens() {
           Retrieve
         </button>
       </div>
+      {error && (
+        <div className="text-red-500 text-shadow-8 font-bold ">{error}</div>
+      )}
+      {success && (
+        <div className="text-green-500 text-shadow-8 font-bold ">{success}</div>
+      )}
     </div>
   );
 }

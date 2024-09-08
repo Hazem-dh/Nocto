@@ -1,4 +1,3 @@
-import "./App.css";
 import React, { useState, useEffect } from "react";
 import { ethers } from "ethers";
 import ConnectWallet from "./components/ConnectWallet";
@@ -53,12 +52,13 @@ const App = () => {
           <div className="flex flex-col items-center justify-center w-1/2 p-10 space-y-6 text-white">
             <h1 className="text-6xl font-bold">Welcome to Nocto</h1>
             <p className="text-2xl">
-              Nocto is your gateway to private, secure, and anonymous
-              transactions. Leveraging FHE (Fully Homomorphic Encryption), Nocto
-              allows you to create a stealth wallet, send ETH anonymously, and
-              retrieve it securely using a unique redeem code.
+              ChatGPT Nocto empowers you to generate a stealth address secured
+              by Fhenix, enabling confidential transactions to a known receiver.
+              You can retrieve the funds securely using a simple redeem code
             </p>
-            <p className="text-xl">Experience next-level privacy with Nocto.</p>
+            <p className="text-xl">
+              Experience FHE stealth addresses with Nocto.
+            </p>
           </div>
           <div className="flex flex-col items-center justify-center w-3/4  space-y-6">
             {isWalletConnected ? (
