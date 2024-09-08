@@ -62,7 +62,6 @@ contract Stealth {
         eaddress redeemer = redeemers[redeemcode];
         eaddress sender = FHE.asEaddress(msg.sender);
         FHE.req(FHE.eq(redeemer, sender));
-        //require(msg.sender == redeemer, "No one sent you ETH");
         // this check might be useless
         require(address(this).balance >= AMOUNT1, "Insufficient balance");
         // Send ETH using transfer()
@@ -89,6 +88,9 @@ contract Stealth {
             block.timestamp > timeLock[msg.sender] + WEEK,
             "Reciver has already retrived the sent eth"
         );
+        // this check might be useless
+        require(address(this).balance >= AMOUNT1, "Insufficient balance");
+
         payable(msg.sender).transfer(AMOUNT1);
     }
 }
