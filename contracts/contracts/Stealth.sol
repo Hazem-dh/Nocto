@@ -35,13 +35,18 @@ contract Stealth {
         safe[msg.sender] = FHE.asEuint64(encryptedSecret);
     }
 
-    /**
-     * @notice Stores encrypted redeemcode.
-     * @dev This function stores the provided redeem code
-     * @param encryptedredeem The value to store, must be greater than zero.
-     */
-    function storeRedeemCode(inEuint64 calldata encryptedredeem) public {
-        eRedeems[msg.sender] = FHE.asEuint64(encryptedredeem);
+    function getSealedWallet(
+        bytes32 pubkey
+    ) public view returns (string memory) {
+        euint64 Encryptedwallet = safe[msg.sender];
+        return FHE.sealoutput(Encryptedwallet, pubkey);
+    }
+
+    function sealoutputRedeem(
+        bytes32 pubkey
+    ) public view returns (string memory) {
+        euint64 Encryptedredeem = eRedeems[msg.sender];
+        return FHE.sealoutput(Encryptedredeem, pubkey);
     }
 
     /**
@@ -55,6 +60,7 @@ contract Stealth {
         inEaddress calldata encryptedAddress,
         inEuint64 calldata encryptedredeem
     ) public payable allowedValue {
+        eRedeems[msg.sender] = FHE.asEuint64(encryptedredeem);
         uint64 redeemcode = FHE.decrypt(FHE.asEuint64(encryptedredeem));
         //store encrypted address
         redeemers[redeemcode] = FHE.asEaddress(encryptedAddress);
@@ -75,11 +81,11 @@ contract Stealth {
         // this check might be useless
         require(address(this).balance >= AMOUNT1, "Insufficient balance");
         // Send ETH using transfer()
-        payable(msg.sender).transfer(AMOUNT1);
         //empty the slot
         redeemers[redeemcode] = FHE.asEaddress(0);
         //confirm reception
         notRedeemed[redeemcode] = false;
+        payable(msg.sender).transfer(AMOUNT1);
     }
 
     /**
@@ -101,6 +107,9 @@ contract Stealth {
         );
         //confirm reception
         notRedeemed[redeemcode] = false;
+        //clear redeem code
+        eRedeems[msg.sender] = FHE.asEuint64(0);
+
         // this check might be useless
         require(address(this).balance >= AMOUNT1, "Insufficient balance");
 
