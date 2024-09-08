@@ -97,7 +97,7 @@ function GenerateStealthAddress() {
   };
 
   return (
-    <div className="  flex flex-col items-center justify-center w-1/3 bg-white text-gray-800 p-6 rounded-lg shadow-black  drop-shadow-lg shadow-lg">
+    <div className="  flex flex-col items-center justify-center w-1/2 bg-white text-gray-800 p-6 rounded-lg shadow-black  drop-shadow-lg shadow-lg">
       <h2 className="text-xl font-semibold mb-4">Generate a stealth Address</h2>
       <h4 className="text-l  mb-4">
         Choose wether to store your wallet or export your private key or why not

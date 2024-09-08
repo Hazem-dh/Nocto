@@ -48,27 +48,38 @@ const App = () => {
         </div>
 
         <ConnectWallet isConnected={handleWalletConnect} />
-
-        <div className="flex flex-col items-center justify-center min-h-screen space-y-6">
-          {isWalletConnected ? (
-            <>
-              {" "}
-              {/* Same as */}
-              <GenerateStealthAddress />
-              <SendTokens></SendTokens>
-              <RetrieveTokens></RetrieveTokens>
-            </>
-          ) : (
-            <>
-              <div className="relative flex h-[1000px] w-full flex-col items-center justify-center    ">
-                <WalletGif />
-                <p className="z-10  text-center text-xl font-medium tracking-tighter text-white">
-                  Connect wallet
-                </p>
-                <Ripple />
-              </div>
-            </>
-          )}
+        <div className="flex flex-row min-h-screen ">
+          <div className="flex flex-col items-center justify-center w-1/2 p-10 space-y-6 text-white">
+            <h1 className="text-4xl font-bold">Welcome to Nocto</h1>
+            <p className="text-xl">
+              Nocto is your gateway to private, secure, and anonymous
+              transactions. Leveraging FHE (Fully Homomorphic Encryption), Nocto
+              allows you to create a stealth wallet, send ETH anonymously, and
+              retrieve it securely using a unique redeem code.
+            </p>
+            <p className="text-lg">Experience next-level privacy with Nocto.</p>
+          </div>
+          <div className="flex flex-col items-center justify-center w-3/4  space-y-6">
+            {isWalletConnected ? (
+              <>
+                {" "}
+                {/* Same as */}
+                <GenerateStealthAddress />
+                <SendTokens></SendTokens>
+                <RetrieveTokens></RetrieveTokens>
+              </>
+            ) : (
+              <>
+                <div className="relative flex h-[1000px] w-full flex-col items-center justify-center    ">
+                  <WalletGif />
+                  <p className="z-10  text-center text-3xl font-medium tracking-tighter text-white">
+                    Connect wallet
+                  </p>
+                  <Ripple />
+                </div>
+              </>
+            )}
+          </div>
         </div>
       </div>
     </>

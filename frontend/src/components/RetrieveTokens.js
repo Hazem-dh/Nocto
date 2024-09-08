@@ -52,7 +52,7 @@ function RetrieveTokens() {
   };
 
   return (
-    <div className="flex flex-col items-center justify-center w-1/3 bg-white text-gray-800 p-6 rounded-lg shadow-black shadow-lg">
+    <div className="flex flex-col items-center justify-center w-1/2 bg-white text-gray-800 p-6 rounded-lg shadow-black shadow-lg">
       <h2 className="text-xl font-semibold mb-4"> Retrieve ETH</h2>
       <div className="flex w-full flex-row mb-2">
         <div className="w-3/4  relative">
