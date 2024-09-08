@@ -52,9 +52,9 @@ const App = () => {
           <div className="flex flex-col items-center justify-center w-1/2 p-10 space-y-6 text-white">
             <h1 className="text-6xl font-bold">Welcome to Nocto</h1>
             <p className="text-2xl">
-              ChatGPT Nocto empowers you to generate a stealth address secured
-              by Fhenix, enabling confidential transactions to a known receiver.
-              You can retrieve the funds securely using a simple redeem code
+              Nocto empowers you to generate a stealth address secured by
+              Fhenix, enabling confidential transactions . You can retrieve the
+              funds securely using a simple redeem code .
             </p>
             <p className="text-xl">
               Experience FHE stealth addresses with Nocto.
