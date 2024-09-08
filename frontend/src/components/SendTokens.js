@@ -68,7 +68,7 @@ function SendTokens() {
         encryptedAddress,
         encrypted_redeem_code,
         {
-          value: ethers.parseEther("0.001"), // Convert 0.1 ETH to Wei
+          value: ethers.parseEther("0.1"), // Convert 0.1 ETH to Wei
         }
       );
       await tx.wait(); // Wait for theEtransat to be mined
