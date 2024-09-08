@@ -1,4 +1,4 @@
-export const CONTRACT_ADDRESS = "0x563Ac14Bfd04c3a3342D1466830ff4470cDFd76c";
+export const CONTRACT_ADDRESS = "0xf0fF2331ABf8d6C166891156b6C7F488a3fE946E";
 export const CONTRACT_ABI = [
   {
     inputs: [
@@ -16,7 +16,13 @@ export const CONTRACT_ABI = [
       },
     ],
     name: "retrieve",
-    outputs: [],
+    outputs: [
+      {
+        internalType: "bool",
+        name: "",
+        type: "bool",
+      },
+    ],
     stateMutability: "nonpayable",
     type: "function",
   },

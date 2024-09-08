@@ -6,9 +6,11 @@ import SendTokens from "./components/SendTokens";
 import RetrieveTokens from "./components/RetrieveTokens";
 import GenerateStealthAddress from "./components/GenerateStealthAddress";
 import logo from "./assets/logo.png";
-function App() {
+import WalletGif from "./components/WalletGif";
+import Ripple from "./components/Ripple";
+
+const App = () => {
   const [isWalletConnected, setIsWalletConnected] = useState(false);
-  const [account, setAccount] = useState(null);
 
   useEffect(() => {
     checkIfWalletIsConnected();
@@ -39,7 +41,7 @@ function App() {
 
   return (
     <>
-      <div className="relative h-screen bg-gradient-to-r from-indigo-800 to-sky-500 ">
+      <div className="relative h-screen bg-gradient-to-r from-indigo-900 to-sky-400 ">
         {/* LOGO */}
         <div className="absolute top-5 left-5">
           <img src={logo} alt="Logo" className="h-32" />
@@ -58,12 +60,18 @@ function App() {
             </>
           ) : (
             <>
-              <p>Wallet is not connected.</p>
+              <div className="relative flex h-[1000px] w-full flex-col items-center justify-center    ">
+                <WalletGif />
+                <p className="z-10  text-center text-xl font-medium tracking-tighter text-white">
+                  Connect wallet
+                </p>
+                <Ripple />
+              </div>
             </>
           )}
         </div>
       </div>
     </>
   );
-}
+};
 export default App;
